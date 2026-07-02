@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm --version)",
+      "Bash(npm create *)",
+      "Bash(npx create-vite@latest --help)",
+      "Bash(npm install *)",
+      "Bash(rm -f src/App.css src/assets/react.svg src/assets/vite.svg src/assets/hero.png)",
+      "Bash(rmdir src/assets)",
+      "Bash(npm run *)",
+      "Bash(curl -s http://localhost:5555/leaguewiki.io/)",
+      "Bash(curl -s http://localhost:5555/leaguewiki.io/src/main.jsx)",
+      "Bash(kill %1)",
+      "Read(//tmp/**)",
+      "Bash(curl -s http://localhost:5556/leaguewiki.io/)"
+    ]
+  }
+}
