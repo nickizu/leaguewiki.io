@@ -38,12 +38,17 @@ src/
 
 ## Deploy workflow
 
-`npm run deploy` builds the app and pushes `dist/` to the `gh-pages` branch via the [`gh-pages`](https://www.npmjs.com/package/gh-pages) package (configured as `predeploy`/`deploy` in `package.json`).
+GitHub Pages is configured to serve from the `main` branch, `/docs` folder — there is no separate `gh-pages` branch and no CI build step. `vite.config.js` sets `build.outDir` to `docs`, so the built site lands directly where Pages expects it.
 
-**One-time prerequisites before the first deploy** (not automated, do manually):
+To deploy:
+1. `npm run build` (outputs to `docs/`)
+2. Commit the updated `docs/` folder along with your source changes
+3. Push `main`
+
+**One-time prerequisites** (already done, listed for reference):
 1. `git init` and commit the project
 2. Add a GitHub remote for this repo (target: `https://nickizu.github.io/leaguewiki.io/`) and push `main`
-3. In the GitHub repo settings, enable Pages to serve from the `gh-pages` branch
+3. In the GitHub repo settings, enable Pages to serve from `main` branch, `/docs` folder
 
 ### `vite.config.js` `base` path
 
