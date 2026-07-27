@@ -1,0 +1,7 @@
+Tasks:
+champion comparison
+visual indicators of champion stat differences (green if higher, red if lower)
+graph to compare across levels
+option to add items into champion stat and comparison
+improve champion search logic so it shows suggestions as you type
+pretty up/polish the whole site
