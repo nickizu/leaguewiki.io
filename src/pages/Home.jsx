@@ -1,9 +1,5 @@
 import { useState } from 'react'
-import Container from 'react-bootstrap/Container'
-import Card from 'react-bootstrap/Card'
-import Alert from 'react-bootstrap/Alert'
-import ListGroup from 'react-bootstrap/ListGroup'
-import Spinner from 'react-bootstrap/Spinner'
+import { Container, Card, Alert, ListGroup, Spinner, Button } from 'react-bootstrap'
 import useChampionData from '../hooks/useChampionData.js'
 import ChampionSearchForm from '../components/ChampionSearchForm.jsx'
 import ChampionStats from '../components/ChampionStats.jsx'
@@ -13,6 +9,7 @@ function Home() {
   const [selectedChampion, setSelectedChampion] = useState(null)
   const [matches, setMatches] = useState(null)
   const [notFound, setNotFound] = useState(false)
+  const [doCompare, setDoCompare] = useState(false)
 
   function handleSearch(query) {
     setSelectedChampion(null)
@@ -86,6 +83,16 @@ function Home() {
           )}
         </Card.Body>
       </Card>
+      
+      <Button onClick={() => setDoCompare(!doCompare)}>{doCompare ? "Remove" : "Compare"}</Button>
+      {doCompare && (
+        <Card>
+          <Card.Body>
+            <Card.Title>compare to</Card.Title>
+            <ChampionSearchForm onSearch={handleSearch} />
+          </Card.Body>
+        </Card>
+      )}
     </Container>
   )
 }

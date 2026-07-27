@@ -1,8 +1,14 @@
-import Image from 'react-bootstrap/Image'
-import Table from 'react-bootstrap/Table'
+import { Image, Table, Button } from 'react-bootstrap'
+import { useState } from 'react'
+import ItemSearchForm from './ItemSearchForm';
 
 function ChampionStats({ champion, version }) {
   const imgUrl = `https://ddragon.leagueoflegends.com/cdn/${version}/img/champion/${champion.image.full}`
+  const [shownItems, setShownItems] = useState([]);
+
+  function handleItemSearch(query) {
+    
+  }
 
   return (
     <div>
@@ -47,6 +53,10 @@ function ChampionStats({ champion, version }) {
           </tr>
         </tbody>
       </Table>
+      {shownItems.map((item) => {
+        return <ItemSearchForm onItemSearch={handleItemSearch}></ItemSearchForm>
+      })}
+      <Button onClick={() => setShownItems((prev) => [...prev, ''])}>Add Item</Button>
     </div>
   )
 }
