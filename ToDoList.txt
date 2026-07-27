@@ -1,7 +1,10 @@
 Tasks:
 champion comparison
 visual indicators of champion stat differences (green if higher, red if lower)
+compute each champs stats per level
 graph to compare across levels
+level field/slider to change shown level
 option to add items into champion stat and comparison
+search based on champion.name, not champion, potentially alt search on champion.id (see "wukong" or "monkeyking" as example)
 improve champion search logic so it shows suggestions as you type
 pretty up/polish the whole site
