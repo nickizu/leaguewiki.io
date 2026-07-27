@@ -4,6 +4,7 @@ import useChampionData from '../hooks/useChampionData.js'
 import ChampionSearchForm from '../components/ChampionSearchForm.jsx'
 import ChampionStats from '../components/ChampionStats.jsx'
 
+
 function Home() {
   const { champions, version, loading, error } = useChampionData()
   const [selectedChampion, setSelectedChampion] = useState(null)
@@ -11,6 +12,15 @@ function Home() {
   const [notFound, setNotFound] = useState(false)
   const [doCompare, setDoCompare] = useState(false)
 
+  // Picking a typeahead suggestion jumps straight to that champion.
+  function handleSelect(champ) {
+    setMatches(null)
+    setNotFound(false)
+    setSelectedChampion(champ)
+  }
+
+  // Fallback path: hitting Search with no suggestion highlighted still runs
+  // the substring filter and shows a list when several champions match.
   function handleSearch(query) {
     setSelectedChampion(null)
     setMatches(null)
@@ -36,7 +46,12 @@ function Home() {
       <Card>
         <Card.Body>
           <Card.Title>Champion Search</Card.Title>
-          <ChampionSearchForm onSearch={handleSearch} />
+          <ChampionSearchForm
+            champions={champions}
+            version={version}
+            onSearch={handleSearch}
+            onSelect={handleSelect}
+          />
 
           {loading && (
             <div className="mt-3">
