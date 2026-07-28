@@ -7,7 +7,7 @@ function ChampionStats({ champion, version }) {
   const [shownItems, setShownItems] = useState([]);
 
   function handleItemSearch(query) {
-    
+
   }
 
   return (
@@ -53,8 +53,8 @@ function ChampionStats({ champion, version }) {
           </tr>
         </tbody>
       </Table>
-      {shownItems.map((item) => {
-        return <ItemSearchForm onItemSearch={handleItemSearch}></ItemSearchForm>
+      {shownItems.map((item, index) => {
+        return <ItemSearchForm key={index} onItemSearch={handleItemSearch}></ItemSearchForm>
       })}
       <Button onClick={() => setShownItems((prev) => [...prev, ''])}>Add Item</Button>
     </div>

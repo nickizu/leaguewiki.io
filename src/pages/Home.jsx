@@ -1,12 +1,16 @@
 import { useState } from 'react'
 import { Container, Card, Alert, ListGroup, Spinner, Button } from 'react-bootstrap'
+import useLatestVersion from '../hooks/useLatestVersion.js'
 import useChampionData from '../hooks/useChampionData.js'
+import useItemData from '../hooks/useItemData.js'
 import ChampionSearchForm from '../components/ChampionSearchForm.jsx'
 import ChampionStats from '../components/ChampionStats.jsx'
 
 
 function Home() {
-  const { champions, version, loading, error } = useChampionData()
+  const { version, loading: versionLoading, error: versionError } = useLatestVersion()
+  const { champions, loading: championsLoading, error: championsError } = useChampionData(version)
+  const { items, loading: itemsLoading, error: itemsError } = useItemData(version)
   const [selectedChampion, setSelectedChampion] = useState(null)
   const [matches, setMatches] = useState(null)
   const [notFound, setNotFound] = useState(false)
@@ -21,6 +25,9 @@ function Home() {
 
   // Fallback path: hitting Search with no suggestion highlighted still runs
   // the substring filter and shows a list when several champions match.
+  const loading = versionLoading || championsLoading
+  const error = versionError || championsError
+
   function handleSearch(query) {
     setSelectedChampion(null)
     setMatches(null)

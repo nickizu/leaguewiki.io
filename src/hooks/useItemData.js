@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
 
 // Fetches the latest DDragon version, then all champion data for that version.
-export default function useChampionData(version) {
-  const [champions, setChampions] = useState(null)
+export default function useItemData(version) {
+  const [items, setItems] = useState(null)
   const [error, setError] = useState(null)
   const [loading, setLoading] = useState(true)
 
@@ -11,15 +11,15 @@ export default function useChampionData(version) {
     
     async function load() {
       try {
-        const champResponse = await fetch(
-          `https://ddragon.leagueoflegends.com/cdn/${version}/data/en_US/champion.json`,
+        const itemResponse = await fetch(
+          `https://ddragon.leagueoflegends.com/cdn/${version}/data/en_US/item.json`,
           { headers: { 'Accept-Charset': 'utf-8' } }
         )
-        const champData = await champResponse.json()
+        const itemData = await itemResponse.json()
 
-        setChampions(champData.data)
+        setItems(itemData.data)
       } catch (err) {
-        console.error('Error loading champion data: ', err)
+        console.error('Error loading item data: ', err)
         setError(err)
       } finally {
         setLoading(false)
@@ -29,5 +29,5 @@ export default function useChampionData(version) {
     load()
   }, [version])
 
-  return { champions, loading, error }
+  return { items, loading, error }
 }
