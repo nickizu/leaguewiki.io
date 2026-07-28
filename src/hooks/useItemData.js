@@ -15,9 +15,13 @@ export default function useItemData(version) {
           `https://ddragon.leagueoflegends.com/cdn/${version}/data/en_US/item.json`,
           { headers: { 'Accept-Charset': 'utf-8' } }
         )
+        
         const itemData = await itemResponse.json()
+        // const srItems = Object.entries(itemData).filter(([id, item]) =>   id.length === 4 && item.maps['11'] &&  item.gold.purchasable)
+        // setItems(srItems)
+        const filteredItems = Object.entries(itemData.data).filter(([id, item]) => id.length === 4)
 
-        setItems(itemData.data)
+        setItems(Object.fromEntries(filteredItems))
       } catch (err) {
         console.error('Error loading item data: ', err)
         setError(err)

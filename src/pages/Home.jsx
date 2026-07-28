@@ -100,7 +100,7 @@ function Home() {
 
           {selectedChampion && (
             <div className="mt-3">
-              <ChampionStats champion={selectedChampion} version={version} />
+              <ChampionStats champion={selectedChampion} version={version} items={items}/>
             </div>
           )}
         </Card.Body>
