@@ -1,8 +1,6 @@
-import { useState } from 'react'
-import Image from 'react-bootstrap/Image'
-import Table from 'react-bootstrap/Table'
-import Form from 'react-bootstrap/Form'
-import Button from 'react-bootstrap/Button'
+import { useRef, useState } from 'react'
+import { Image, Table, Button, Form } from 'react-bootstrap'
+import ItemSearchForm from './ItemSearchForm';
 import { computeStatsAtLevel } from '../utils/computeStats.js'
 
 function fmt(n, maxDecimals = 2) {
@@ -15,9 +13,16 @@ function ChampionStats({ champion, version }) {
   const imgUrl = `https://ddragon.leagueoflegends.com/cdn/${version}/img/champion/${champion.image.full}`
   // const [shownItems, setShownItems] = useState([]);
 
-  // function handleItemSearch(query) {
-    
+  const nextId = useRef(0)
 
+  function handleItemSearch(query) {
+    
+  }
+
+  function handleItemRemove(id) {
+    setShownItems((prev) => prev.filter((item) => item.id !== id))
+  }
+  
   const stats = computeStatsAtLevel(champion.stats, level)
 
   return (
@@ -72,19 +77,10 @@ function ChampionStats({ champion, version }) {
           </tr>
         </tbody>
       </Table>
-      
-      {/* TODO (Nick): item feature. */}
-      {shownItems.map((item, index) => (
-        <div key={index} className="mt-2 text-muted">
-          Item slot {index + 1} — item search coming soon
-        </div>
-      ))}
-      <Button
-        className="mt-2"
-        onClick={() => setShownItems((prev) => [...prev, ''])}
-      >
-        Add Item
-      </Button>
+      {shownItems.map((item) => {
+        return <ItemSearchForm key={item.id} itemNum={item.id} onItemSearch={handleItemSearch} onItemRemove={handleItemRemove}></ItemSearchForm>
+      })}
+      <Button onClick={() => setShownItems((prev) => [...prev, { id: nextId.current++, value: ''}])}>Add Item</Button>
     </div>
   )
 }

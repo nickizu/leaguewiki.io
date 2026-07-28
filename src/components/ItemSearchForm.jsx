@@ -1,12 +1,16 @@
 import { useState } from 'react'
 import { Form, Button, InputGroup } from 'react-bootstrap'
 
-function ItemSearchForm({ onItemSearch }) {
+function ItemSearchForm(props) {
   const [query, setQuery] = useState('')
 
   function handleSubmit(e) {
     e.preventDefault()
-    onItemSearch(query.trim())
+    props.onItemSearch(query.trim())
+  }
+
+  function handleRemove() {
+    props.onItemRemove(props.itemNum)
   }
 
   return (
@@ -21,7 +25,7 @@ function ItemSearchForm({ onItemSearch }) {
         <Button type="submit" variant="primary">
           Search
         </Button>
-        <Button>Remove</Button>
+        <Button onClick={handleRemove}>Remove</Button>
       </InputGroup>
     </Form>
   )
