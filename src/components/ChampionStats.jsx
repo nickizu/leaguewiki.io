@@ -9,46 +9,12 @@ function fmt(n, maxDecimals = 2) {
 
 function ChampionStats({ champion, version, items }) {
   const [level, setLevel] = useState(1)
-  const [shownItems, setShownItems] = useState([])
-  const [selectedItem, setSelectedItem] = useState(null)
   const [matches, setMatches] = useState(null)
   const [notFound, setNotFound] = useState(false)
   const [doCompare, setDoCompare] = useState(false)
 
   const imgUrl = `https://ddragon.leagueoflegends.com/cdn/${version}/img/champion/${champion.image.full}`
 
-  const nextId = useRef(0)
-
-  function handleItemSearch(query) {
-    setSelectedItem(null)
-    setMatches(null)
-    setNotFound(false)
-
-    if (!items || !query) return
-
-    const results = Object.values(items).filter((item) =>
-      item.name.toLowerCase().includes(query.toLowerCase())
-    )
-
-    if (results.length === 0) {
-      setNotFound(true)
-    } else if (results.length > 1) {
-      setMatches(results)
-    } else {
-      setSelectedItem(results[0])
-    }
-  }
-
-  function handleItemSelect(item) {
-    setMatches(null)
-    setNotFound(false)
-    setSelectedItem(item)
-  }
-
-  function handleItemRemove(id) {
-    setShownItems((prev) => prev.filter((item) => item.id !== id))
-  }
-  
   const stats = computeStatsAtLevel(champion.stats, level)
 
   return (
@@ -103,10 +69,6 @@ function ChampionStats({ champion, version, items }) {
           </tr>
         </tbody>
       </Table>
-      {shownItems.map((item) => {
-        return <ItemSearchForm items={items} version={version} key={item.id} itemNum={item.id} onSearch={handleItemSearch} onSelect={handleItemSelect} onItemRemove={handleItemRemove}></ItemSearchForm>
-      })}
-      <Button onClick={() => setShownItems((prev) => [...prev, { id: nextId.current++, value: ''}])}>Add Item</Button>
     </div>
   )
 }
