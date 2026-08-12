@@ -1,5 +1,8 @@
 import { useState } from 'react'
-import { Table, Form, Row, Col, Button, Image } from 'react-bootstrap'
+import { Table, Form, Row, Col, Image, Button } from 'react-bootstrap'
+import {
+  LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
+} from 'recharts'
 import ChampionSearchForm from './ChampionSearchForm.jsx'
 import { computeStatsAtLevel } from '../utils/computeStats.js'
 
@@ -7,7 +10,7 @@ function fmt(n, maxDecimals = 2) {
   return Number(n.toFixed(maxDecimals))
 }
 
-// Stat rows to compare: [label, stat key, decimals to show]
+// Table rows: [label, stat key, decimals]
 const STAT_ROWS = [
   ['HP', 'hp', 0],
   ['MP', 'mp', 0],
@@ -21,7 +24,16 @@ const STAT_ROWS = [
   ['Move Speed', 'movespeed', 0],
 ]
 
-// Green if this value is higher than the other, red if lower, neutral if equal.
+// Stats offered in the graph dropdown (the ones that scale with level).
+const GRAPH_STATS = [
+  ['HP', 'hp'],
+  ['Attack Damage', 'attackdamage'],
+  ['Armor', 'armor'],
+  ['Magic Resist', 'spellblock'],
+  ['Attack Speed', 'attackspeed'],
+  ['HP Regen', 'hpregen'],
+]
+
 function cellClass(value, other) {
   if (value > other) return 'table-success'
   if (value < other) return 'table-danger'
@@ -56,8 +68,8 @@ function ChampionCompare({ champions, version, baseChampion }) {
   const [champA, setChampA] = useState(baseChampion ?? null)
   const [champB, setChampB] = useState(null)
   const [level, setLevel] = useState(1)
+  const [graphStat, setGraphStat] = useState('hp')
 
-  // Enter/Search fallback: select the first champion whose name matches.
   function pickFirst(query, setter) {
     if (!champions || !query) return
     const hit = Object.values(champions).find((c) =>
@@ -70,9 +82,21 @@ function ChampionCompare({ champions, version, baseChampion }) {
   const statsB = champB ? computeStatsAtLevel(champB.stats, level) : null
   const bothChosen = statsA && statsB
 
+  // Build the per-level series (levels 1-20) for the selected graph stat.
+  const chartData = bothChosen
+    ? Array.from({ length: 20 }, (_, i) => {
+        const lvl = i + 1
+        return {
+          level: lvl,
+          a: fmt(computeStatsAtLevel(champA.stats, lvl)[graphStat], 2),
+          b: fmt(computeStatsAtLevel(champB.stats, lvl)[graphStat], 2),
+        }
+      })
+    : []
+
   return (
     <div>
-        <Row className="mb-3">
+      <Row className="mb-3">
         <Col>
           <Form.Label>Champion 1</Form.Label>
           {champA ? (
@@ -114,28 +138,55 @@ function ChampionCompare({ champions, version, baseChampion }) {
       )}
 
       {bothChosen && (
-        <Table bordered className="mt-3">
-          <thead>
-            <tr>
-              <th>Stat (level {level})</th>
-              <ChampionHeader champion={champA} version={version} />
-              <ChampionHeader champion={champB} version={version} />
-            </tr>
-          </thead>
-          <tbody>
-            {STAT_ROWS.map(([label, key, decimals]) => {
-              const a = statsA[key]
-              const b = statsB[key]
-              return (
-                <tr key={key}>
-                  <th>{label}</th>
-                  <td className={cellClass(a, b)}>{fmt(a, decimals)}</td>
-                  <td className={cellClass(b, a)}>{fmt(b, decimals)}</td>
-                </tr>
-              )
-            })}
-          </tbody>
-        </Table>
+        <>
+          <Table bordered className="mt-3">
+            <thead>
+              <tr>
+                <th>Stat (level {level})</th>
+                <ChampionHeader champion={champA} version={version} />
+                <ChampionHeader champion={champB} version={version} />
+              </tr>
+            </thead>
+            <tbody>
+              {STAT_ROWS.map(([label, key, decimals]) => {
+                const a = statsA[key]
+                const b = statsB[key]
+                return (
+                  <tr key={key}>
+                    <th>{label}</th>
+                    <td className={cellClass(a, b)}>{fmt(a, decimals)}</td>
+                    <td className={cellClass(b, a)}>{fmt(b, decimals)}</td>
+                  </tr>
+                )
+              })}
+            </tbody>
+          </Table>
+
+          <Form.Label>Graph stat</Form.Label>
+          <Form.Select
+            className="mb-3"
+            value={graphStat}
+            onChange={(e) => setGraphStat(e.target.value)}
+          >
+            {GRAPH_STATS.map(([label, key]) => (
+              <option key={key} value={key}>{label}</option>
+            ))}
+          </Form.Select>
+
+          <div style={{ width: '100%', height: 300 }}>
+            <ResponsiveContainer>
+              <LineChart data={chartData} margin={{ top: 5, right: 20, bottom: 20, left: 0 }}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="level" label={{ value: 'Level', position: 'insideBottom', offset: -10 }} />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <Line type="monotone" dataKey="a" name={champA.name} stroke="#2a78d6" dot={false} />
+                <Line type="monotone" dataKey="b" name={champB.name} stroke="#eb6834" strokeDasharray="6 4" dot={false} />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+        </>
       )}
     </div>
   )
