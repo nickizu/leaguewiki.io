@@ -5,7 +5,7 @@ import useChampionData from '../hooks/useChampionData.js'
 import useItemData from '../hooks/useItemData.js'
 import ChampionSearchForm from '../components/ChampionSearchForm.jsx'
 import ChampionStats from '../components/ChampionStats.jsx'
-
+import ChampionCompare from '../components/ChampionCompare.jsx'
 
 function Home() {
   const { version, loading: versionLoading, error: versionError } = useLatestVersion()
@@ -106,15 +106,28 @@ function Home() {
         </Card.Body>
       </Card>
       
-      <Button onClick={() => setDoCompare(!doCompare)}>{doCompare ? "Remove" : "Compare"}</Button>
-      {doCompare && (
-        <Card>
-          <Card.Body>
-            <Card.Title>compare to</Card.Title>
-            <ChampionSearchForm onSearch={handleSearch} />
-          </Card.Body>
-        </Card>
-      )}
+    {selectedChampion && (
+  <>
+    <Button onClick={() => setDoCompare(!doCompare)}>
+      {doCompare ? "Remove" : "Compare"}
+    </Button>
+    {doCompare && (
+      <Card className="mt-3">
+        <Card.Body>
+          <Card.Title>Compare Champions</Card.Title>
+          <ChampionCompare
+            key={selectedChampion.id}
+            champions={champions}
+            version={version}
+            baseChampion={selectedChampion}
+          />
+        </Card.Body>
+      </Card>
+    )}
+  </>
+)}
+
+
     </Container>
   )
 }
