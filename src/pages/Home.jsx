@@ -126,8 +126,6 @@ function Home() {
     )}
   </>
 )}
-
-
     </Container>
   )
 }

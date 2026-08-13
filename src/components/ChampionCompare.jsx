@@ -1,10 +1,11 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Table, Form, Row, Col, Image, Button } from 'react-bootstrap'
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
 } from 'recharts'
 import ChampionSearchForm from './ChampionSearchForm.jsx'
 import { computeStatsAtLevel } from '../utils/computeStats.js'
+import useRecentPairs from '../hooks/useRecentPairs.js'
 
 function fmt(n, maxDecimals = 2) {
   return Number(n.toFixed(maxDecimals))
@@ -64,11 +65,39 @@ function ChampionPill({ champion, version, onClear }) {
   )
 }
 
+function RecentPairPill({ champA, champB, version, onSelect }) {
+  const imgA = `https://ddragon.leagueoflegends.com/cdn/${version}/img/champion/${champA.image.full}`
+  const imgB = `https://ddragon.leagueoflegends.com/cdn/${version}/img/champion/${champB.image.full}`
+  return (
+    <Button
+      variant="outline-secondary"
+      size="sm"
+      className="d-flex align-items-center me-2 mb-2"
+      onClick={onSelect}
+    >
+      <Image src={imgA} alt={champA.name} width={20} height={20} rounded className="me-1" />
+      {champA.name}
+      <span className="mx-2 text-muted">vs</span>
+      <Image src={imgB} alt={champB.name} width={20} height={20} rounded className="me-1" />
+      {champB.name}
+    </Button>
+  )
+}
+
 function ChampionCompare({ champions, version, baseChampion }) {
   const [champA, setChampA] = useState(baseChampion ?? null)
   const [champB, setChampB] = useState(null)
   const [level, setLevel] = useState(1)
   const [graphStat, setGraphStat] = useState('hp')
+  const [recentPairs, addPair] = useRecentPairs()
+
+  useEffect(() => {
+    if (champA && champB) addPair(champA.id, champB.id)
+  }, [champA, champB, addPair])
+
+  const resolvedRecentPairs = recentPairs
+    .map((pair) => ({ champA: champions?.[pair.a], champB: champions?.[pair.b] }))
+    .filter((pair) => pair.champA && pair.champB)
 
   function pickFirst(query, setter) {
     if (!champions || !query) return
@@ -96,6 +125,26 @@ function ChampionCompare({ champions, version, baseChampion }) {
 
   return (
     <div>
+      {resolvedRecentPairs.length > 0 && (
+        <div className="mb-3">
+          <Form.Label className="d-block">Recent comparisons</Form.Label>
+          <div className="d-flex flex-wrap">
+            {resolvedRecentPairs.map(({ champA: pairA, champB: pairB }) => (
+              <RecentPairPill
+                key={`${pairA.id}-${pairB.id}`}
+                champA={pairA}
+                champB={pairB}
+                version={version}
+                onSelect={() => {
+                  setChampA(pairA)
+                  setChampB(pairB)
+                }}
+              />
+            ))}
+          </div>
+        </div>
+      )}
+
       <Row className="mb-3">
         <Col>
           <Form.Label>Champion 1</Form.Label>
