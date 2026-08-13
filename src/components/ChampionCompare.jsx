@@ -222,14 +222,17 @@ function ChampionCompare({ champions, version, baseChampion }) {
             ))}
           </Form.Select>
 
-          <div style={{ width: '100%', height: 300 }}>
+<div style={{ width: '100%', height: 320 }}>
             <ResponsiveContainer>
-              <LineChart data={chartData} margin={{ top: 5, right: 20, bottom: 20, left: 0 }}>
+              <LineChart data={chartData} margin={{ top: 5, right: 20, bottom: 25, left: 0 }}>
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="level" label={{ value: 'Level', position: 'insideBottom', offset: -10 }} />
-                <YAxis />
+                <XAxis
+                  dataKey="level"
+                  label={{ value: 'Level', position: 'insideBottom', offset: -15 }}
+                />
+                <YAxis allowDecimals={false} />
                 <Tooltip />
-                <Legend />
+                <Legend verticalAlign="top" height={36} />
                 <Line type="monotone" dataKey="a" name={champA.name} stroke="#2a78d6" dot={false} />
                 <Line type="monotone" dataKey="b" name={champB.name} stroke="#eb6834" strokeDasharray="6 4" dot={false} />
               </LineChart>
