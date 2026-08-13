@@ -20,8 +20,7 @@ function ChampionStats({ champion, version, items }) {
   return (
     <div>
       <Image src={imgUrl} alt={champion.name} rounded />
-      <p>{champion.blurb}</p>
-
+      <br></br>
       <Form.Label>Level: {level}</Form.Label>
       <Form.Range
         min={1}
